@@ -1,33 +1,29 @@
 # Regex_webapp_AWS
 
 ## Overview
-`Regex_webapp_AWS` is a web application designed to provide users with an interface to test and apply regular expressions. The application is hosted on AWS, leveraging its robust and scalable infrastructure. 
+`Regex_webapp_AWS` is a web application built with Flask, designed for testing and applying regular expressions. The application is deployed on AWS using EC2, providing a scalable and robust environment.
 
 ## Features
-- **Interactive Regex Tester:** Users can input text and regex patterns to see real-time matches.
-- **Pattern Library:** A collection of common regex patterns for various use cases.
-- **Syntax Highlighting:** Enhanced readability with syntax highlighting for regex patterns and input text.
-- **User Authentication:** Secure login and registration system using AWS Cognito.
-- **Scalability:** Hosted on AWS with auto-scaling groups to handle varying loads.
-- **Storage:** User data and patterns are stored securely using AWS RDS and S3.
+- **Interactive Regex Tester:** Real-time testing of regex patterns against input text.
+- **Pattern Library:** Collection of common regex patterns for various use cases.
+- **Syntax Highlighting:** Enhanced readability with syntax highlighting.
+- **User Authentication:** Secure user login and registration.
+- **Scalability:** Deployed on AWS EC2 to handle varying loads.
 
 ## Architecture
-The application follows a microservices architecture, using the following AWS services:
-- **AWS EC2:** For hosting the web server.
-- **AWS RDS:** For the relational database.
-- **AWS S3:** For storing user data and files.
-- **AWS Lambda:** For serverless functions to handle specific tasks.
-- **AWS API Gateway:** For creating, publishing, maintaining, monitoring, and securing APIs.
-- **AWS Cognito:** For user authentication and authorization.
-- **AWS CloudFormation:** For deploying and managing the infrastructure.
+The application architecture includes:
+- **Flask:** For the web application framework.
+- **AWS EC2:** For hosting the web application.
+- **AWS RDS (Optional):** For relational database storage.
+- **AWS S3 (Optional):** For storing user data and files.
 
 ## Getting Started
 
 ### Prerequisites
 - AWS Account
 - AWS CLI configured
-- Docker (for local development)
-- Node.js (for running the web application locally)
+- Python 3.x
+- Virtualenv
 
 ### Installation
 
@@ -37,52 +33,75 @@ The application follows a microservices architecture, using the following AWS se
     cd Regex_webapp_AWS
     ```
 
-2. **Install dependencies:**
+2. **Create a virtual environment and activate it:**
     ```sh
-    npm install
+    python3 -m venv venv
+    source venv/bin/activate
     ```
 
-3. **Set up environment variables:**
+3. **Install dependencies:**
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+4. **Set up environment variables:**
     Create a `.env` file in the root directory and add the following:
     ```plaintext
+    FLASK_APP=app.py
+    FLASK_ENV=development
+    SECRET_KEY=your_secret_key
     AWS_ACCESS_KEY_ID=your_access_key_id
     AWS_SECRET_ACCESS_KEY=your_secret_access_key
     AWS_REGION=your_aws_region
-    COGNITO_USER_POOL_ID=your_user_pool_id
-    COGNITO_APP_CLIENT_ID=your_app_client_id
-    RDS_HOST=your_rds_host
-    RDS_USER=your_rds_user
-    RDS_PASSWORD=your_rds_password
-    RDS_DB_NAME=your_db_name
     ```
 
-4. **Run the application:**
+5. **Run the application locally:**
     ```sh
-    npm start
+    flask run
     ```
 
 ### Deployment
 
-1. **Build the Docker image:**
+1. **Create an EC2 instance:**
+    - Launch an EC2 instance from the AWS Management Console.
+    - Choose an appropriate Amazon Machine Image (AMI).
+    - Configure security groups to allow HTTP (port 80) and SSH (port 22) access.
+
+2. **SSH into your EC2 instance:**
     ```sh
-    docker build -t regex_webapp .
+    ssh -i your-key-pair.pem ec2-user@your-ec2-public-dns
     ```
 
-2. **Push the Docker image to AWS ECR:**
+3. **Install dependencies on EC2:**
     ```sh
-    aws ecr create-repository --repository-name regex_webapp
-    aws ecr get-login-password --region your_region | docker login --username AWS --password-stdin your_account_id.dkr.ecr.your_region.amazonaws.com
-    docker tag regex_webapp:latest your_account_id.dkr.ecr.your_region.amazonaws.com/regex_webapp:latest
-    docker push your_account_id.dkr.ecr.your_region.amazonaws.com/regex_webapp:latest
+    sudo yum update -y
+    sudo yum install -y python3
+    sudo pip3 install virtualenv
     ```
 
-3. **Deploy using AWS CloudFormation:**
+4. **Transfer your application to EC2:**
     ```sh
-    aws cloudformation deploy --template-file cloudformation-template.yaml --stack-name RegexWebAppStack --capabilities CAPABILITY_NAMED_IAM
+    scp -i your-key-pair.pem -r * ec2-user@your-ec2-public-dns:/home/ec2-user/Regex_webapp_AWS
     ```
+
+5. **Set up the application on EC2:**
+    ```sh
+    cd Regex_webapp_AWS
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    ```
+
+6. **Run the application on EC2:**
+    ```sh
+    nohup flask run --host=0.0.0.0 &
+    ```
+
+7. **Access your application:**
+    - Open a browser and navigate to `http://your-ec2-public-dns`.
 
 ## Usage
-- Access the web application at `http://your-aws-ec2-public-dns`.
+- Access the web application at `http://your-ec2-public-dns`.
 - Register or log in using the authentication system.
 - Start testing and applying regex patterns using the interactive interface.
 
