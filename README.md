@@ -108,10 +108,6 @@ The application architecture includes:
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
-## License
-This project is licensed under the MIT License.
 
-## Acknowledgments
-- Thanks to the contributors of the libraries and tools used in this project.
-- Special thanks to the AWS community for their comprehensive documentation and support.
+
 
